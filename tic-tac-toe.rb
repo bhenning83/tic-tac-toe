@@ -8,10 +8,9 @@
 # After every turn, test the player's array against the winning combinations
 # If the players array matches a winning combination, end the game and declare them the winner
 require "pry"
-class Game
-  def initialize
-    @@play_options = Array(1..9)
-  end
+
+module BoardCreation
+  @@play_options = Array(1..9)
 
   def create_board
     puts "#{@@play_options[0]} | #{@@play_options[1]} | #{@@play_options[2]}"
@@ -22,25 +21,41 @@ class Game
   end
 end
 
-class Player < Game
-  attr_accessor :name
+class Player
+  include BoardCreation
+  attr_accessor :name, :symbol
 
-  def initialize(name)
-    @name = name
+  def initialize(name, symbol)
+    self.name = name
+    self.symbol = symbol
     @play_log = []
   end
 
   def play_turn
-    puts "Pick where you want to play"
+    puts " "
+    puts "Your turn, #{self.name}. Where do you want to play?"
     number_picked = gets.chomp.to_i
-    @@play_options[number_picked - 1] = "X"
+    @@play_options[number_picked - 1] = self.symbol
+    @play_log << number_picked
+    puts " "
+    create_board
   end
 end
 
-player1 = Player.new("Brendon")
-round1 = Game.new
-round1.create_board
-player1.play_turn
-round1.create_board
+class PlayGame < Player
+  def initialize
+    @player1 = Player.new("Mac", "X")
+    @player2 = Player.new("Charlie", "O")
+  end
+
+  def start_game
+    create_board
+    @player1.play_turn
+    @player2.play_turn
+  end
+end
+
+first_game = PlayGame.new
+first_game.start_game
 
   
